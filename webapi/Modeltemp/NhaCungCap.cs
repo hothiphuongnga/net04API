@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace webapi.Models;
+namespace webapi.Modeltemp;
 
 public partial class NhaCungCap
 {
@@ -12,6 +12,4 @@ public partial class NhaCungCap
     public string? DiaChi { get; set; }
 
     public string? Stk { get; set; }
-
-    public virtual ICollection<NhapHang> NhapHangs { get; set; } = new List<NhapHang>();
 }

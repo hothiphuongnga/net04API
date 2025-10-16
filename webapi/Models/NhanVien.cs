@@ -16,13 +16,11 @@ public partial class NhanVien
 
     public decimal? Luong { get; set; }
 
-    public int? MaQuanLy { get; set; } = null;
+    public int? MaQuanLy { get; set; }
 
+    //
     [JsonIgnore]
-
     public virtual ICollection<NhanVien> InverseMaQuanLyNavigation { get; set; } = new List<NhanVien>();
-
-    [JsonIgnore]
 
     public virtual NhanVien? MaQuanLyNavigation { get; set; }
 }

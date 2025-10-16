@@ -24,6 +24,7 @@ public class NhanVienController : ControllerBase
     public async Task<IActionResult> Get()
     {
         var res = await _context.NhanViens.ToListAsync();
-        return new ResponseEntity(200, res,"Lấy danh sách nhân viên thành công");
+        return new ResponseEntity(200, res, "Lấy danh sách nhân viên thành công");
     }
 }
+// scaffold để update 1 table 

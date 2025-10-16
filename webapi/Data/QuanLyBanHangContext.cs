@@ -34,6 +34,8 @@ public partial class QuanLyBanHangContext : DbContext
 
     public virtual DbSet<SanPham> SanPhams { get; set; }
 
+    public virtual DbSet<Test> Tests { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=DefaultConnection");
 
@@ -110,6 +112,10 @@ public partial class QuanLyBanHangContext : DbContext
             entity.ToTable("NhaCungCap");
 
             entity.Property(e => e.DiaChi).HasMaxLength(255);
+            entity.Property(e => e.Stk)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("STK");
             entity.Property(e => e.Ten).HasMaxLength(255);
         });
 
@@ -185,6 +191,13 @@ public partial class QuanLyBanHangContext : DbContext
             entity.HasOne(d => d.MaPhanLoaiNavigation).WithMany(p => p.SanPhams)
                 .HasForeignKey(d => d.MaPhanLoai)
                 .HasConstraintName("FK_SanPham_PhanLoai");
+        });
+
+        modelBuilder.Entity<Test>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__test__3214EC0744298810");
+
+            entity.ToTable("test");
         });
 
         OnModelCreatingPartial(modelBuilder);
