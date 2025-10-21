@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,11 @@ public class KhachHangController : ControllerBase
 {
     // inject QuanLyBanHangContext vào controller để tương tác với DB
     private readonly QuanLyBanHangContext _context;
-    public KhachHangController(QuanLyBanHangContext context)
+    private readonly IMapper _mapper;
+    public KhachHangController(QuanLyBanHangContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
     [HttpGet]
     public async Task<IActionResult> Get()
@@ -58,11 +61,20 @@ public class KhachHangController : ControllerBase
             // trả về lỗi 400 bad request
             return new ResponseEntity(400, ModelState, "Dữ liệu không hợp lệ");
         }
-        KhachHang kh = new KhachHang();
-        kh.Id = 0; // thêm mới thì id = 0
-        kh.Ten = khachHang.Ten;
-        kh.Email = khachHang.Email;
-        kh.Sdt = khachHang.Sdt;
+        
+        KhachHang kh = _mapper.Map<KhachHang>(khachHang);
+        // <KhachHang> là kiểu trả về mong muốn
+        // (khachHang) là cái cần chuyển
+
+
+
+
+        // KhachHang kh = new KhachHang();
+        // kh.Id = 0; // thêm mới thì id = 0
+        // kh.Ten = khachHang.Ten;
+        // kh.Email = khachHang.Email;
+        // kh.Sdt = khachHang.Sdt;
+
         // xử lý đúng thêm mới
         // EF
         // 
@@ -97,6 +109,8 @@ public class KhachHangController : ControllerBase
         {
             return new ResponseEntity(404, find, "Không tìm thấy");
         }
+        // chuyển KhachHangVM -> KhachHang
+        // thêm 10 field 
         find.Email = khachHang.Email;
         find.Sdt = khachHang.Sdt;
         find.Ten = khachHang.Ten;
@@ -166,8 +180,8 @@ public class KhachHangController : ControllerBase
 
     //
     [HttpPost("sql2")]
-     // ExecuteSqlInterpolatedAsync gọn và an toàn hơn
-     // an toàn hơn cách 1 
+    // ExecuteSqlInterpolatedAsync gọn và an toàn hơn
+    // an toàn hơn cách 1 
     public async Task<IActionResult> CreateSql2([FromBody] KhachHangVM khachHang)
     {
         // kiểm tra model hợp lệ hay không
@@ -181,6 +195,39 @@ public class KhachHangController : ControllerBase
         return new ResponseEntity(201, res, "Thêm thành công");
     }
 
+
+    // SELECT * FROM KHACHHANG WHERE TEN LIKE  N'nga'
+    // api tìm kiếm khách hàng theo tên
+    [HttpGet("search")] // api/khachhang/search?ten=""
+    public async Task<IActionResult> SearchByName([FromQuery] string ten)
+    {
+        // dùng EF
+        // .Where(k => )
+        var res = await _context.KhachHangs.Where(k => k.Ten.Contains(ten)).ToListAsync();
+        // tìm không []
+        // tìm không thấy trả 404 => không thấy 
+        return new ResponseEntity(200, res, "Tìm kiếm khách hàng thành công");
+    }
+
+    // dùng SQL RAW
+    // demo lỗi sql injection
+    [HttpGet("searchsql_bad")] // api/khachhang/searchsql_bad?ten=""
+    public async Task<IActionResult> SearchByNameSqlBad([FromQuery] string ten)
+    {
+        // dùng EF
+        // .Where(k => )
+        // tìm không []
+        // tìm không thấy trả 404 => không thấy 
+        // %' OR 1=1 --
+        string sql = $"SELECT * FROM KHACHHANG WHERE TEN LIKE N'%{ten}%'";
+
+        var res = await _context.KhachHangs.FromSqlRaw(sql).ToListAsync();
+
+        return new ResponseEntity(200, res, "Tìm kiếm khách hàng thành công");
+    }
+
+    // nếu không dùng được = ef và linq thì sẽ sql  -> Store proceduce database : chương trình mini viêt trên db , 
+    
 }
 
 

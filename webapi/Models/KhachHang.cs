@@ -12,6 +12,7 @@ public partial class KhachHang
     public string? Email { get; set; }
 
     public string? Sdt { get; set; }
+    // public string MetaData { get; set; }
 
     public virtual ICollection<DonHang> DonHangs { get; set; } = new List<DonHang>();
 }

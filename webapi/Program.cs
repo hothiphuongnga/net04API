@@ -14,6 +14,9 @@ builder.Services.AddControllers();
 // đường đẫn mặc định : /swagger/v1/swagger.json
 builder.Services.AddSwaggerGen();
 
+// thêm AutoMapper
+// builder.Services.AddAutoMapper(cfg => cfg.AddProfile<AutoMapperProfile>());
+builder.Services.AddAutoMapper(cfg=> { },typeof(AutoMapperProfile));
 
 // cấu hình kết nối db
 // Thêm Entity Framework 

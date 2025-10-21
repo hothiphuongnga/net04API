@@ -18,4 +18,6 @@ public class KhachHangVM
 
     [Required(ErrorMessage = "Số điện thoại không được để trống")]
     public string? Sdt { get; set; }
+    // public List<string> MetaData { get; set; } = new List<string>();
+
 }
