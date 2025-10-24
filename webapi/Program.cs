@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using webapi.Data;
+using webapi.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,11 @@ builder.Services.AddSwaggerGen();
 // thêm AutoMapper
 // builder.Services.AddAutoMapper(cfg => cfg.AddProfile<AutoMapperProfile>());
 builder.Services.AddAutoMapper(cfg=> { },typeof(AutoMapperProfile));
+
+// Auto mapper thủ công
+builder.Services.AddSingleton<INhaCungCapMapping, NhaCungCapMapping>();
+
+
 
 // cấu hình kết nối db
 // Thêm Entity Framework 
